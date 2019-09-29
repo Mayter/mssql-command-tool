@@ -9,7 +9,7 @@
 ##### Windows环境
 
 ```
-mssql-command-tool.exe	没有压缩	9.47 MB
+mssql-command-tool.exe	无压缩	9.47 MB
 mssql-command-tool-upx.exe	upx压缩9次	4.63M
 
 mssql-command-tool.exe -host 127.0.0.1 -u sa -p admin -c "whoami" -P 1438
@@ -19,8 +19,17 @@ mssql-command-tool.exe -host 127.0.0.1 -u sa -p admin -c "whoami" -port 1438
 ##### Linux环境
 
 ```
-mssql-command-tool	没有压缩	9.81 MB
-mssql-command-tool-upx	upx压缩9次	4.91 MB
+mssql-command-tool-linux	无压缩	9.81 MB
+mssql-command-tool-linux-upx	upx压缩9次	4.91 MB
 mssql-command-tool -host 127.0.0.1 -u sa -p admin -c "whoami" -P 1438
 mssql-command-tool -host 127.0.0.1 -u sa -p admin -c "whoami" -port 1438	
+```
+
+##### Mac环境
+
+```
+mssql-command-tool-mac 无压缩	10.2
+mssql-command-tool-mac-upx	upx压缩9次	4.9M
+./mssql-command-tool --server 127.0.0.1 -u sa -p admin -c "whoami /user" -port 1438
+./mssql-command-tool --server 127.0.0.1 -u sa -p admin -c "whoami /user" -P 1438	
 ```
