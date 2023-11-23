@@ -8,6 +8,7 @@
 感谢老哥分享。
 
 示例：
+```
 NAME:
    Mssql Toolkit - mssql command tool
 
@@ -51,6 +52,7 @@ GLOBAL OPTIONS:
    --install_clrcmd, --in_clrcmd           install clrcmd
    --uninstall_clrcmd, --un_clrcmd         uninstall clrcmd
    --help, -h                              show help
+```
 ##### Windows环境
 
 ```
