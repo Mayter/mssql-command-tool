@@ -6,7 +6,9 @@
 因为wolvez老哥的没有写自定义mssql端口，我就添加了这个功能 
 官方链接：[http://wolvez.club/2019/09/19/mssql-command-tool/](http://wolvez.club/2019/09/19/mssql-command-tool/)
 感谢老哥分享。
-因为在golang里面没有找到获取clr返回消息的打印方法，所以只能无显.如果有大佬知道怎么写显示欢迎私信.
+
+dll文件代码:`https://github.com/uknowsec/SharpSQLTools`
+因为在golang里面没有找到获取clr返回消息的打印方法，所以只能无显.如果有大佬知道怎么写显示欢迎私信.admin@mayter.cn
 示例：
 ```
 NAME:
