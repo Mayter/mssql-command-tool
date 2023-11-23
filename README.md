@@ -88,3 +88,9 @@ mssql-command-tool-linux
 执行命令：
 ./mssql-command-tool-linux -host 127.0.0.1 -u sa -p admin -C "c:\windows\system32\cmd.exe /c whoami >c:\whoami.txt -port 1438
 ```
+
+来源:
+```
+https://github.com/Ridter/PySQLTools
+https://github.com/uknowsec/SharpSQLTools
+```
