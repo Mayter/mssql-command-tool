@@ -7,8 +7,9 @@
 官方链接：[http://wolvez.club/2019/09/19/mssql-command-tool/](http://wolvez.club/2019/09/19/mssql-command-tool/)
 感谢老哥分享。
 
-dll文件代码:`https://github.com/uknowsec/SharpSQLTools`
-因为在golang里面没有找到获取clr返回消息的打印方法，所以只能无显.如果有大佬知道怎么写显示欢迎私信.admin@mayter.cn
+dll文件代码:`[https://github.com/uknowsec/SharpSQLTools](https://github.com/uknowsec/SharpSQLTools/blob/master/SharpSQLTools/Setting.cs)`
+因为在golang的github.com/denisenkom/go-mssqldb里面没有找到获取clr返回消息的打印方法，所以只能无显.如果有大佬知道怎么写显示欢迎私信.`admin@mayter.cn`
+
 示例：
 ```
 NAME:
