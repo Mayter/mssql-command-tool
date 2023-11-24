@@ -16,7 +16,7 @@ NAME:
    Mssql Toolkit - mssql command tool
 
 USAGE:
-   mssql-command-tools_Linux_amd64 [global options] command [command options] [arguments...]
+   mssql-command-tools_Windows_64.exe [global options] command [command options] [arguments...]
 
 AUTHOR:
    Microsoft.com clr参考: https://github.com/uknowsec/SharpSQLTools/
@@ -34,7 +34,8 @@ GLOBAL OPTIONS:
    --cmd value, -c value, --exec value     Exec System Command | xp_cmdshell命令执行 (default: "whoami")
    --cmd1 value, --c1 value                Exec System Command | sp_oacreate无回显执行 (default: "whoami >C:\\whoami.log")
    --cmd2 value, --c2 value                Exec System Command | sp_oacreate有回显执行 (default: "whoami")
-   --cmd3 value, --c3 value                Exec System Command | clr无回显执行 (default: "clr_exec whoami")
+   --cmd3 value, --c3 value                Exec System Command | clr无回显执行 | clr命令参考: https://github.com/uknowsec/SharpSQLTools/ (default: "clr_exec whoami")
+   --cmdpy value                           Exec System Command | clr无回显执行 | clr命令参考: https://github.com/Ridter/PySQLTools (default: "clr_exec whoami")
    --cmd4 value, --c4 value                Exec System Command | 自写clr执行 (default: "-c4 net -c5 user")
    --cmd5 value, --c5 value                Exec System Command | 自写clr执行 (default: "-c4 net -c5 user")
    --cmd6 value, --c6 value                Exec System Command | xp_cmdshell命令执行|过滤了xp_cmdshell等关键字提交方法语句 (default: "-c6 whoami")
@@ -57,15 +58,17 @@ GLOBAL OPTIONS:
    --clr, --clropen                        Enabled clr enabled
    --dclr, --dclose                        Disable clr enabled
    --rlce, --rlceopen                      r languag eenabled
-   --plce, --plceopen                      python language enabled
    --install_clr, --in_clr                 install clr  | clr命令参考: https://github.com/uknowsec/SharpSQLTools/
    --uninstall_clr, --un_clr               uninstall clr
+   --installpy_clr, --inpy_clr             installpy clr  | clr命令参考: https://github.com/Ridter/PySQLTools
+   --uninstallpy_clr, --unpy_clr           uninstallpy clr
    --install_clrcmd, --in_clrcmd           install clrcmd
    --uninstall_clrcmd, --un_clrcmd         uninstall clrcmd
    --install_clrcmd1, --in_clrcmd1         install clrcmd1
    --uninstall_clrcmd1, --un_clrcmd1       uninstall clrcmd
    --upload                                --upload --local c:\svchost.exe --remote C:\Windows\Temp\svchost.exe
    --help, -h                              show help
+
 
 ```
 ##### Windows环境
