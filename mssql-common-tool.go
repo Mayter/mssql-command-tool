@@ -269,47 +269,47 @@ func main() {
 		},
 		&cli.BoolFlag{
 			Name:        "rlce,rlceopen",
-			Usage:       "r languag eenabled",
+			Usage:       "r|python languag eenabled",
 			Destination: &rlce,
 		},
 		&cli.BoolFlag{
 			Name:        "install_clr,in_clr",
-			Usage:       "install clr  | clr命令参考: https://github.com/uknowsec/SharpSQLTools/",
+			Usage:       "install clr  | --cmd3 \"clr_exec whoami\" | clr命令参考: https://github.com/uknowsec/SharpSQLTools/",
 			Destination: &install_clr,
 		},
 		&cli.BoolFlag{
 			Name:        "uninstall_clr,un_clr",
-			Usage:       "uninstall clr",
+			Usage:       "uninstall clr | --cmd3 \"clr_exec whoami\"",
 			Destination: &uninstall_clr,
 		},
 		&cli.BoolFlag{
 			Name:        "installpy_clr,inpy_clr",
-			Usage:       "installpy clr  | clr命令参考: https://github.com/Ridter/PySQLTools",
+			Usage:       "installpy clr  | --cmdpy \"clr_exec whoami\" | clr命令参考: https://github.com/Ridter/PySQLTools",
 			Destination: &installpy_clr,
 		},
 		&cli.BoolFlag{
 			Name:        "uninstallpy_clr,unpy_clr",
-			Usage:       "uninstallpy clr",
+			Usage:       "uninstallpy clr | --cmdpy \"clr_exec whoami\"",
 			Destination: &uninstallpy_clr,
 		},
 		&cli.BoolFlag{
 			Name:        "install_clrcmd,in_clrcmd",
-			Usage:       "install clrcmd",
+			Usage:       "install clrcmd | \"--c4 net --c5 user\"",
 			Destination: &install_clrcmd,
 		},
 		&cli.BoolFlag{
 			Name:        "uninstall_clrcmd,un_clrcmd",
-			Usage:       "uninstall clrcmd",
+			Usage:       "uninstall clrcmd | \"--c4 net --c5 user\"",
 			Destination: &uninstall_clrcmd,
 		},
 		&cli.BoolFlag{
 			Name:        "install_clrcmd1,in_clrcmd1",
-			Usage:       "install clrcmd1",
+			Usage:       "install clrcmd1 | --cmd7 \"whoami\"",
 			Destination: &install_clrcmd1,
 		},
 		&cli.BoolFlag{
 			Name:        "uninstall_clrcmd1,un_clrcmd1",
-			Usage:       "uninstall clrcmd",
+			Usage:       "uninstall clrcmd | --cmd7 \"whoami\"",
 			Destination: &uninstall_clrcmd1,
 		},
 		&cli.BoolFlag{
