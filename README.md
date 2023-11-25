@@ -8,7 +8,7 @@
 感谢老哥分享。
 
 dll文件代码:`[https://github.com/uknowsec/SharpSQLTools](https://github.com/uknowsec/SharpSQLTools/blob/master/SharpSQLTools/Setting.cs)`
-因为在golang的github.com/denisenkom/go-mssqldb里面没有找到获取clr返回消息的打印方法，所以只能无显.如果有大佬知道怎么写显示欢迎私信.`admin@mayter.cn`
+`https://github.com/Ridter/MSSQL_CLR`
 
 示例：
 ```
@@ -285,6 +285,7 @@ clr_assembly_sc {shellcode}   - assembly shellcode created by donut.
 ```
 https://github.com/Ridter/PySQLTools
 https://github.com/uknowsec/SharpSQLTools
+https://github.com/Ridter/MSSQL_CLR
 https://github.com/JKme/cube/blob/master/core/sqlcmdmodule/mssql3.go
 https://quan9i.top/post/SQL%20Server%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%96%B9%E5%BC%8F%E6%B1%87%E6%80%BB/
 ```
