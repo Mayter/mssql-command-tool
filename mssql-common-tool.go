@@ -51,6 +51,7 @@ var (
 	clr               bool
 	dclr              bool
 	rlce              bool
+	jobopen           bool
 	upload            bool
 	install_clr       bool
 	uninstall_clr     bool
@@ -299,6 +300,11 @@ func main() {
 			Destination: &rlce,
 		},
 		&cli.BoolFlag{
+			Name:        "jobopen",
+			Usage:       "MSSQL Agent Job服务开启",
+			Destination: &jobopen,
+		},
+		&cli.BoolFlag{
 			Name:        "install_clr,in_clr",
 			Usage:       "install clr  | --cmd3 \"clr_exec whoami\" | clr命令参考: https://github.com/uknowsec/SharpSQLTools/",
 			Destination: &install_clr,
@@ -510,6 +516,11 @@ func main() {
 		if c.IsSet("rlce") {
 			if c.Bool("rlce") {
 				Openrlce()
+			}
+		}
+		if c.IsSet("jobopen") {
+			if c.Bool("jobopen") {
+				Openjob()
 			}
 		}
 		if c.IsSet("install_clr") {
@@ -888,12 +899,89 @@ func Closeclr() {
 }
 
 func Openrlce() {
-	value, err := conn.Prepare("sp_configure 'external scripts enabled'")
+
+	retmsg := &sqlexp.ReturnMessage{}
+	ctx := context.Background()
+	msgQuery := `sp_configure 'external scripts enabled';`
+	rows, err := conn.QueryContext(ctx, msgQuery, retmsg)
 	if err != nil {
-		log.Fatal("Prepare failed:", err.Error())
+		log.Fatalf("QueryContext failed: %v", err)
 	}
-	defer value.Close()
-	fmt.Println("r language enabled successfully")
+	active := true
+	for active {
+		msg := retmsg.Message(ctx)
+		switch m := msg.(type) {
+		case sqlexp.MsgNotice:
+			fmt.Println(m.Message)
+		case sqlexp.MsgNext:
+			inresult := true
+			for inresult {
+				inresult = rows.Next()
+				if inresult {
+					cols, err := rows.Columns()
+					if err != nil {
+						log.Fatalf("Columns failed: %v", err)
+					}
+					fmt.Println(cols)
+					var d interface{}
+					if err = rows.Scan(&d); err == nil {
+						fmt.Println(d)
+					}
+				}
+			}
+			fmt.Println("r&python language enabled successfully")
+		case sqlexp.MsgNextResultSet:
+			active = rows.NextResultSet()
+		case sqlexp.MsgError:
+			fmt.Println("Error:", m.Error)
+		case sqlexp.MsgRowsAffected:
+			fmt.Println("Rows affected:", m.Count)
+		}
+
+	}
+
+}
+
+func Openjob() {
+
+	retmsg := &sqlexp.ReturnMessage{}
+	ctx := context.Background()
+	msgQuery := `exec master.dbo.xp_servicecontrol 'start','SQLSERVERAGENT';`
+	rows, err := conn.QueryContext(ctx, msgQuery, retmsg)
+	if err != nil {
+		log.Fatalf("QueryContext failed: %v", err)
+	}
+	active := true
+	for active {
+		msg := retmsg.Message(ctx)
+		switch m := msg.(type) {
+		case sqlexp.MsgNotice:
+			fmt.Println(m.Message)
+		case sqlexp.MsgNext:
+			inresult := true
+			for inresult {
+				inresult = rows.Next()
+				if inresult {
+					cols, err := rows.Columns()
+					if err != nil {
+						log.Fatalf("Columns failed: %v", err)
+					}
+					fmt.Println(cols)
+					var d interface{}
+					if err = rows.Scan(&d); err == nil {
+						fmt.Println(d)
+					}
+				}
+			}
+		case sqlexp.MsgNextResultSet:
+			active = rows.NextResultSet()
+		case sqlexp.MsgError:
+			fmt.Println("Error:", m.Error)
+		case sqlexp.MsgRowsAffected:
+			fmt.Println("Rows affected:", m.Count)
+		}
+	}
+
 }
 
 func Install_clr() {
