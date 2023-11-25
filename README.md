@@ -61,6 +61,7 @@ GLOBAL OPTIONS:
    --clr, --clropen                        Enabled clr enabled
    --dclr, --dclose                        Disable clr enabled
    --rlce, --rlceopen                      r|python languag eenabled
+   --jobopen                               MSSQL Agent Job服务开启
    --install_clr, --in_clr                 install clr  | --cmd3 "clr_exec whoami" | clr命令参考: https://github.com/uknowsec/SharpSQLTools/
    --uninstall_clr, --un_clr               uninstall clr | --cmd3 "clr_exec whoami"
    --installpy_clr, --inpy_clr             installpy clr  | --cmdpy "clr_exec whoami" | clr命令参考: https://github.com/Ridter/PySQLTools
