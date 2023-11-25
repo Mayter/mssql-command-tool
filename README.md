@@ -206,11 +206,13 @@ VMware
 
 Command List Dir Success.
 
+-x cmd命令
 mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -option -x --cmd11 "whoami"
 []
 nt service\mssqlserver
 
 
+-X powershell命令
 mssql-command-tools_Windows_64.exe -s 192.168.3.186 -u sa -p Admin12345 -option -X --cmd11 "Get-Process explorer"
 []
 
