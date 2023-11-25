@@ -30,10 +30,12 @@ GLOBAL OPTIONS:
    --password value, -p value              The database password
    --database value, -d value              The database name (default: "msdb")
    --port value, -P value                  The database port (default: 1433)
+   --option value                          -xcmd, -X powershell (default: "whoami")
    --query value, -q value, --sql value    SQL query (default: "select @@version")
    --cmd value, -c value, --exec value     Exec System Command | xp_cmdshell命令执行 (default: "whoami")
    --cmd1 value, --c1 value                Exec System Command | sp_oacreate无回显执行 (default: "whoami >C:\\whoami.log")
-   --cmd2 value, --c2 value                Exec System Command | sp_oacreate有回显执行 (default: "whoami")
+   --cmd2 value, --c2 value                Exec System Command | sp_oacreate有回显执行 | wscript.shell (default: "whoami")
+   --cmdsp value                           Exec System Command | sp_oacreate有回显执行 | {72C24DD5-D70A-438B-8A42-98424B88AFB8} (default: "whoami")
    --cmd3 value, --c3 value                Exec System Command | clr无回显执行 | clr命令参考: https://github.com/uknowsec/SharpSQLTools/ (default: "clr_exec whoami")
    --cmdpy value                           Exec System Command | clr无回显执行 | clr命令参考: https://github.com/Ridter/PySQLTools (default: "clr_exec whoami")
    --cmd4 value, --c4 value                Exec System Command | 自写clr执行 (default: "-c4 net -c5 user")
@@ -43,6 +45,7 @@ GLOBAL OPTIONS:
    --cmd8 value, --c8 value                Exec System Command | r language command (default: "-c8 whoami")
    --cmd9 value, --c9 value                Exec System Command | python language command (default: "-c9 whoami")
    --cmd10 value, --c10 value              Exec System Command | createAndStartJob command (default: "-c10 whoami >c:\\windows\\temp\\123.txt")
+   --cmd11 value, --c11 value              Exec System Command | 自写clr执行 | --option -x --cmd11 cmd | --option -X --cmd11 powershell (default: "--option -x --cmd11 cmd")
    --dir value, --dirtree value            xp_dirtree列目录 | dir c:
    --path value                            网站路径 -path + -code | c:\inetpub\wwwroot\cmd.asp (default: "c:\\inetpub\\wwwroot\\cmd.asp")
    --local value                           本地路径 localFile (default: "c:\\1.txt")
@@ -57,19 +60,19 @@ GLOBAL OPTIONS:
    --dole, --dolose                        Disable sp_oacreate
    --clr, --clropen                        Enabled clr enabled
    --dclr, --dclose                        Disable clr enabled
-   --rlce, --rlceopen                      r languag eenabled
-   --install_clr, --in_clr                 install clr  | clr命令参考: https://github.com/uknowsec/SharpSQLTools/
-   --uninstall_clr, --un_clr               uninstall clr
-   --installpy_clr, --inpy_clr             installpy clr  | clr命令参考: https://github.com/Ridter/PySQLTools
-   --uninstallpy_clr, --unpy_clr           uninstallpy clr
-   --install_clrcmd, --in_clrcmd           install clrcmd
-   --uninstall_clrcmd, --un_clrcmd         uninstall clrcmd
-   --install_clrcmd1, --in_clrcmd1         install clrcmd1
-   --uninstall_clrcmd1, --un_clrcmd1       uninstall clrcmd
+   --rlce, --rlceopen                      r|python languag eenabled
+   --install_clr, --in_clr                 install clr  | --cmd3 "clr_exec whoami" | clr命令参考: https://github.com/uknowsec/SharpSQLTools/
+   --uninstall_clr, --un_clr               uninstall clr | --cmd3 "clr_exec whoami"
+   --installpy_clr, --inpy_clr             installpy clr  | --cmdpy "clr_exec whoami" | clr命令参考: https://github.com/Ridter/PySQLTools
+   --uninstallpy_clr, --unpy_clr           uninstallpy clr | --cmdpy "clr_exec whoami"
+   --install_clrcmd, --in_clrcmd           install clrcmd | "--c4 net --c5 user"
+   --uninstall_clrcmd, --un_clrcmd         uninstall clrcmd | "--c4 net --c5 user"
+   --install_clrcmd1, --in_clrcmd1         install clrcmd1 | --cmd7 "whoami"
+   --uninstall_clrcmd1, --un_clrcmd1       uninstall clrcmd | --cmd7 "whoami"
+   --install_clrcmd2, --in_clrcmd2         install clrcmd2 | --cmd11 "whoami"
+   --uninstall_clrcmd2, --un_clrcmd2       uninstall clrcmd2 | --cmd11 "whoami"
    --upload                                --upload --local c:\svchost.exe --remote C:\Windows\Temp\svchost.exe
    --help, -h                              show help
-
-
 ```
 ##### Windows环境
 
