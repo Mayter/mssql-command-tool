@@ -6,6 +6,7 @@ wolvez老哥写的第一版代码
 感谢老哥分享
 
 dll文件代码:`https://github.com/uknowsec/SharpSQLTools/blob/master/SharpSQLTools/Setting.cs`
+
 dll文件代码:`https://github.com/Ridter/MSSQL_CLR`
 
 示例：
