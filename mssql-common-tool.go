@@ -159,13 +159,13 @@ func main() {
 		&cli.StringFlag{
 			Name:        "cmd3,c3",
 			Value:       "clr_exec whoami",
-			Usage:       "Exec System Command | clr无回显执行 | clr命令参考: https://github.com/uknowsec/SharpSQLTools/",
+			Usage:       "Exec System Command | clr执行 | clr命令参考: https://github.com/uknowsec/SharpSQLTools/",
 			Destination: &cmd3,
 		},
 		&cli.StringFlag{
 			Name:        "cmdpy",
 			Value:       "clr_exec whoami",
-			Usage:       "Exec System Command | clr无回显执行 | clr命令参考: https://github.com/Ridter/PySQLTools",
+			Usage:       "Exec System Command | clr执行 | clr命令参考: https://github.com/Ridter/PySQLTools",
 			Destination: &cmdpy,
 		},
 		&cli.StringFlag{
@@ -930,7 +930,7 @@ func Install_clr() {
 	}
 	rows1.Close()
 	//fmt.Println(onReturn1, onMessage1)
-	fmt.Println("Clrcmd Install Success.")
+	fmt.Println("Clrcmd Install SharpSQLTools CLR Success.")
 	return
 
 }
@@ -954,7 +954,7 @@ func Uninstall_clr() {
 
 	} else {
 		stmt, err := conn.Prepare("drop PROCEDURE dbo.ClrExec; drop assembly CLR_module")
-		fmt.Printf("Uninstall Clr Success.\n")
+		fmt.Printf("Uninstall SharpSQLTools CLR Success.\n")
 		if err != nil {
 			//fmt.Println("Query Error", err)
 			return
@@ -1002,7 +1002,7 @@ func Installpy_clr() {
 	}
 	rows1.Close()
 	//fmt.Println(onReturn1, onMessage1)
-	fmt.Println("Clrcmd Install Success.")
+	fmt.Println("Clrcmd Install PySQLTools Clr Success.")
 	return
 
 }
@@ -1026,7 +1026,7 @@ func Uninstallpy_clr() {
 
 	} else {
 		stmt, err := conn.Prepare("drop PROCEDURE dbo.sp_help_text_tables; drop assembly sys_objects_mssql_log")
-		fmt.Printf("Uninstall Clrpy Success.\n")
+		fmt.Printf("Uninstall PySQLTools Clr Success.\n")
 		if err != nil {
 			//fmt.Println("Query Error", err)
 			return
@@ -1152,7 +1152,7 @@ func Install_clrcmd1() {
 		rows1.Scan(&onReturn1, &onMessage1)
 	}
 	rows1.Close()
-	fmt.Println("Clrcmd Install Success.")
+	fmt.Println("Clrcmd Install clrcmd1 Success.")
 	return
 
 }
@@ -1176,7 +1176,7 @@ func Uninstall_clrcmd1() {
 
 	} else {
 		stmt, err := conn.Prepare("drop procedure ExecCommand;drop assembly quq;")
-		fmt.Printf("uninstall clrcmd Success.\n")
+		fmt.Printf("uninstall clrcmd1 Success.\n")
 		if err != nil {
 			//fmt.Println("Query Error", err)
 			return
@@ -1218,7 +1218,7 @@ func Install_clrcmd2() {
 		rows1.Scan(&onReturn1, &onMessage1)
 	}
 	rows1.Close()
-	fmt.Println("Clrcmd2 Install Success.")
+	fmt.Println("Clrcmd2 Install clrcmd2 Success.")
 	return
 
 }
@@ -1242,7 +1242,7 @@ func Uninstall_clrcmd2() {
 
 	} else {
 		stmt, err := conn.Prepare("DROP FUNCTION dbo.Sphelps;DROP ASSEMBLY clr_Modules;")
-		fmt.Printf("uninstall clrcmd Success.\n")
+		fmt.Printf("uninstall clrcmd2 Success.\n")
 		if err != nil {
 			//fmt.Println("Query Error", err)
 			return
@@ -1736,7 +1736,7 @@ OutputDataSet = pandas.DataFrame([str(p, "gb2312")])'
 			fmt.Println("扫描结果失败:", err.Error())
 			return
 		}
-		fmt.Println("命令输出:", cmdOut)
+		fmt.Println(cmdOut)
 	}
 
 	if err = rows.Err(); err != nil {
@@ -1760,7 +1760,9 @@ func createAndStartJob() error {
 	if err != nil {
 		return fmt.Errorf("failed to create and start job: %v", err)
 	}
+	fmt.Println("CreateAndStartJob Command Success!")
 	return nil
+
 }
 
 func write_web() {
