@@ -1,10 +1,8 @@
 # mssql-command-tool
 
-#### 声明
-我没有学过go语言可能代码写的很垃圾，但是工具能用就行了。
 
-wolvez老哥写的初始代码
-官方链接：[http://wolvez.club/2019/09/19/mssql-command-tool/](http://wolvez.club/2019/09/19/mssql-command-tool/)
+wolvez老哥写的第一版代码
+链接：[http://wolvez.club/2019/09/19/mssql-command-tool/](http://wolvez.club/2019/09/19/mssql-command-tool/)
 感谢老哥分享
 
 dll文件代码:`https://github.com/uknowsec/SharpSQLTools/blob/master/SharpSQLTools/Setting.cs`
